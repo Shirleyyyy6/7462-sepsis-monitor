@@ -36,6 +36,7 @@ jobs:
                any::tidyr
                any::gt
                any::tictoc
+               any::plotly
                any::tidyverse
                
       - name: Render document
