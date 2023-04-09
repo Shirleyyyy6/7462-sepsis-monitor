@@ -1,0 +1,64 @@
+---
+title: "Hourly Workflow"
+author: "Jiayi Hu"
+format: html
+editor: visual
+---
+```{r}
+source("sepsis_monitor_functions.R")
+source("sepsis_hw7.R")
+```
+
+**Last Updated on:** `r Sys.time()`
+
+**Patients currently have sepsis**
+
+```{r}
+most_recent_data %>%
+  filter(SepsisLabel == 1) %>%
+  select(PatientID,HR,Temp,Resp) %>%
+  rename(`HeartRate`="HR",
+        `Temperature`="Temp",
+        `RespiratoryRate`="Resp") %>%
+  kable()
+```
+
+```{r}
+plot <- new_data %>%
+  group_by(PatientID) %>%
+  mutate(Sepsissum = sum(SepsisLabel)) %>%
+  filter(Sepsissum != 0) %>%
+  tidyr::pivot_longer(cols = c('HR','Temp','Resp'),
+                      names_to = 'indicator',
+                      values_to = 'value') %>%
+  mutate(text_label = str_c(
+    "ID: ", PatientID, 
+    "\nTime: ", obsTime,
+    "\nvalue: ", value)) %>%
+  ggplot(aes(x=obsTime, y=value, group=PatientID, color=PatientID)) +
+  geom_line(aes(text = text_label)) +
+  facet_wrap(~ indicator) + 
+  theme_bw() +
+  theme(legend.position = 'none')
+
+ggplotly(plot,tooltip = "text")
+
+```
+
+**All Patients**
+```{r}
+new_data %>%
+  group_by(PatientID) %>%
+  arrange(desc(obsTime)) %>%
+  slice(1:2) %>%
+  summarise(`HR_diff(bpm)` = HR[1] - HR[2],
+            `Temp_diff(ºC)` = Temp[1] - Temp[2],
+            `RespR_diff(rpm)` = Resp[1] - Resp[2]) %>%
+  kable()
+  
+```
+
+
+
+
+
