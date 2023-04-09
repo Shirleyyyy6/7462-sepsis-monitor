@@ -4,16 +4,15 @@ author: "Jiayi Hu"
 format: html
 editor: visual
 ---
-```{r}
-source("sepsis_monitor_functions.R")
-source("sepsis_hw7.R")
+```{r include=FALSE}
+source("sepsis_code.R")
 ```
 
 **Last Updated on:** `r Sys.time()`
 
 **Patients currently have sepsis**
 
-```{r}
+```{r echo=FALSE}
 most_recent_data %>%
   filter(SepsisLabel == 1) %>%
   select(PatientID,HR,Temp,Resp) %>%
@@ -23,7 +22,7 @@ most_recent_data %>%
   kable()
 ```
 
-```{r}
+```{r echo=FALSE}
 plot <- new_data %>%
   group_by(PatientID) %>%
   mutate(Sepsissum = sum(SepsisLabel)) %>%
@@ -46,7 +45,7 @@ ggplotly(plot,tooltip = "text")
 ```
 
 **All Patients**
-```{r}
+```{r echo=FALSE}
 new_data %>%
   group_by(PatientID) %>%
   arrange(desc(obsTime)) %>%
